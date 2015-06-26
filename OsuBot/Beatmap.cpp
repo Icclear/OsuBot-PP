@@ -134,7 +134,7 @@ void Beatmap::readHitObjects()
 		if (hitobject->Type == 2 || hitobject->Type == 6 ||
 			hitobject->Type == 21 || hitobject->Type == 22)	//Slider
 		{
-			//hitobject->SliderType = Line[5];
+			hitobject->SliderType = Line[5];
 			hitobject->Repetition = System::Convert::ToInt32(Line[6]);
 			hitobject->PixelLength = System::Convert::ToDouble(Line[7]->Replace(".", ","));
 		}

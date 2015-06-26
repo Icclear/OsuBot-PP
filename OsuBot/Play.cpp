@@ -41,7 +41,7 @@ Play::~Play()
 	delete NextClick;
 }
 
-INPUT *Play::InitButton(DWORD VirtualKeyCode, bool Press)
+INPUT *Play::InitButton(WORD VirtualKeyCode, bool Press)
 {
 	INPUT *Button = new INPUT;
 	Button->type = INPUT_KEYBOARD;
@@ -61,6 +61,7 @@ void Play::StartPlaying()
 
 	int Time;
 	bool FoundNextHit = false;
+	KlickedHit = false;
 	bool FinishedSong = false;
 
 	const int preKlick = 10;
@@ -75,10 +76,17 @@ void Play::StartPlaying()
 	int BPMIterator = 0;
 	int HitObjectsIterator = 0;
 
+	do
+	{
+		Osu->readTime(Time);
+		Sleep(5);
+	}
+	while (Time < HitObjects[0]->Time - 200 || Time > HitObjects[0]->Time);	//Wait for start
+
 	while (Playing)
 	{
 		Osu->readTime(Time);
-		if (BPMIterator < BPMs->Count - 1 && Time > BPMs[BPMIterator + 1]->Time)	//BPM change
+		while (BPMIterator < BPMs->Count - 1 && Time > BPMs[BPMIterator + 1]->Time && Time >= 0)	//BPM change
 		{
 			BPMIterator++;
 			if (BPMs[BPMIterator]->Duration < 0)	//Inherited BPM
@@ -88,6 +96,7 @@ void Play::StartPlaying()
 				currentBPM = lastBPM = BPMs[BPMIterator]->Duration;
 			}
 			//TODO: Inherited points bugged
+			continue;
 		}
 
 		if (!FoundNextHit)
@@ -95,6 +104,7 @@ void Play::StartPlaying()
 			while (!FoundNextHit)
 			{//TODO: Some hits are left out (Long stream practice)
 				delete nextHit;
+
 				if (HitObjectsIterator >= HitObjects->Count)
 				{
 					FinishedSong = true;
@@ -124,38 +134,43 @@ void Play::StartPlaying()
 				}
 				else if (nextHit->Type == 12 || nextHit->Type == 8)	//Spin
 				{
-					NextClick->EndKlick = nextHit->SpinEndTime + extraPressTime;
+					NextClick->EndKlick = nextHit->SpinEndTime;
 
 					if (BPMIterator < BPMs->Count - 1 && NextClick->EndKlick >= BPMs[BPMIterator + 1]->Time)
-						NextClick->EndKlick = BPMs[BPMIterator + 1]->Time - extraPressTime * 2;
-					//TODO: Spin at the end
+						NextClick->EndKlick = BPMs[BPMIterator + 1]->Time - extraPressTime;
+					//TODO: Some spins don't work
 				}
 				else		//Slider
 				{
 					NextClick->EndKlick = NextClick->BeginKlick
 						+ currentBPM * nextHit->Repetition * nextHit->PixelLength
-						/ LoadedBeatmap->getMapSliderMultiplier() / 100 + extraPressTime;
+						/ LoadedBeatmap->getMapSliderMultiplier() / 100;
 
 					if (BPMIterator < BPMs->Count - 1 && NextClick->EndKlick >= BPMs[BPMIterator + 1]->Time)
-						NextClick->EndKlick = BPMs[BPMIterator + 1]->Time - extraPressTime * 2;
+						NextClick->EndKlick = BPMs[BPMIterator + 1]->Time - extraPressTime;
 				}
 			}
 		}
 		if (!FinishedSong)
 		{
-			if (Time > NextClick->BeginKlick && Time < NextClick->EndKlick && !KlickedHit)
+			if (Time > NextClick->BeginKlick && FoundNextHit)
 			{
-				KlickedHit = true;
+ 				FoundNextHit = false;
 				Klick();
 			}
-			else if(KlickedHit)
-			{
-				KlickedHit = false;
-				FoundNextHit = false;
-			}
+			//if (Time > NextClick->BeginKlick && !KlickedHit)
+			//{
+			//	KlickedHit = true;
+			//	Klick();
+			//}
+			//else if(KlickedHit && Time > NextClick->BeginKlick + 5)	//Buffer for it to not let hits out.
+			//{
+			//	KlickedHit = false;
+			//	FoundNextHit = false;
+			//}
 		}
 		ReleaseButtons(Time);
-		//TODO: Fix random stopping
+		//TODO: Fix random stopping (after pause?)
 	} 
 }
 

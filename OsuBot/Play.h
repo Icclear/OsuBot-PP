@@ -42,7 +42,7 @@ private:
 	System::Collections::Generic::List<BPM^> ^BPMs;
 	System::Collections::Generic::List<HitObject^> ^HitObjects;
 
-	INPUT *InitButton(DWORD ButtonNR, bool Press);
+	INPUT *InitButton(WORD ButtonNR, bool Press);
 
 	void Klick();
 	void ReleaseButtons(const int &Time);
