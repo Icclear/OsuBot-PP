@@ -13,7 +13,7 @@ ref struct Relax
 	int EndKlick;
 };
 
-ref struct Button
+ref struct KlickButton
 {
 	bool Pressed;
 	INPUT *PressButton;
@@ -33,11 +33,11 @@ private:
 	OsuManagement ^Osu;
 	Relax ^NextClick;
 
-	Button ^Button1;
-	Button ^Button2;
+	KlickButton ^Button1;
+	KlickButton ^Button2;
 
 	int LastButtonPressed = 1;
-	bool KlickedHit;
+	bool FoundNextHit;
 
 	System::Collections::Generic::List<BPM^> ^BPMs;
 	System::Collections::Generic::List<HitObject^> ^HitObjects;
@@ -46,6 +46,7 @@ private:
 
 	void Klick();
 	void ReleaseButtons(const int &Time);
+	void ResetButtons();
 	void BT1Klick();
 	void BT2Klick();
 };

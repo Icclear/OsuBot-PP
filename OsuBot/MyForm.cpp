@@ -88,10 +88,13 @@ void OsuBot::MyForm::LoadSelectedBeatmap()
 	}
 
 	LoadedBeatmap->LoadBeatmap(SelectedDiff);
-	if (LoadedBeatmap->getError() == 0)
+
+	if (LoadedBeatmap->getError() == 0 && (LoadedBeatmap->getMode() == 0 
+			|| LoadedBeatmap->getMode() == 4 && LoadedBeatmap->getVersion() < 1))	//TODO: Find out the actual version mode was implemented.
 		BeatmapLoaded = true;
 	else
 		BeatmapLoaded = false;
+
 	if (BeatmapLoaded)
 	{
 		Playcheck->Enabled = true;
@@ -99,6 +102,8 @@ void OsuBot::MyForm::LoadSelectedBeatmap()
 	else
 	{
 		Playcheck->Enabled = false;
+		std::cout << "MapVersion: " << LoadedBeatmap->getVersion() << " & Mode: " << LoadedBeatmap->getMode() << std::endl;
+		//TODO: Remove this line later.
 	}
 }
 

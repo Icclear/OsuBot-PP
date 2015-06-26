@@ -12,8 +12,8 @@ Play::Play(Beatmap ^beatmap, OsuManagement ^osu)
 	BPMs = LoadedBeatmap->getBPMs();
 	HitObjects = LoadedBeatmap->getHitObjects();
 
-	Button1 = gcnew Button;
-	Button2 = gcnew Button;
+	Button1 = gcnew KlickButton;
+	Button2 = gcnew KlickButton;
 
 	Button1->PressButton = InitButton(VK_OEM_MINUS, true);
 	Button1->ReleaseButton = InitButton(VK_OEM_MINUS, false);
@@ -60,8 +60,7 @@ void Play::StartPlaying()
 	bool Playing = true;
 
 	int Time;
-	bool FoundNextHit = false;
-	KlickedHit = false;
+	FoundNextHit = false;
 	bool FinishedSong = false;
 
 	const int preKlick = 10;
@@ -76,8 +75,18 @@ void Play::StartPlaying()
 	int BPMIterator = 0;
 	int HitObjectsIterator = 0;
 
+	ResetButtons();
+
+	RegisterHotKey(NULL, 1, MOD_NOREPEAT, 0x53);
+	MSG HotKey;
+
+	char Title[0x10];
 	do
 	{
+		Osu->getWindowTitle(Title);	
+		if (CString(Title) == CString("osu!"))	//Not playing at all
+			return;
+
 		Osu->readTime(Time);
 		Sleep(5);
 	}
@@ -85,6 +94,14 @@ void Play::StartPlaying()
 
 	while (Playing)
 	{
+		if (Time % 100 == 0)
+		{
+			GetMessage(&HotKey, NULL, NULL, NULL);
+			if (HotKey.message == WM_HOTKEY)
+				if (HotKey.wParam == 1)
+				Playing = false;
+		}
+
 		Osu->readTime(Time);
 		while (BPMIterator < BPMs->Count - 1 && Time > BPMs[BPMIterator + 1]->Time && Time >= 0)	//BPM change
 		{
@@ -95,14 +112,14 @@ void Play::StartPlaying()
 			{
 				currentBPM = lastBPM = BPMs[BPMIterator]->Duration;
 			}
-			//TODO: Inherited points bugged
+			//TODO: Inherited points bugged?
 			continue;
 		}
 
 		if (!FoundNextHit)
 		{
 			while (!FoundNextHit)
-			{//TODO: Some hits are left out (Long stream practice)
+			{
 				delete nextHit;
 
 				if (HitObjectsIterator >= HitObjects->Count)
@@ -110,13 +127,15 @@ void Play::StartPlaying()
 					FinishedSong = true;
 					if (Button1->Pressed || Button2->Pressed)
 						break;
-					std::cout << "Finished Playing." << std::endl;
+					std::cout << "Finished Playing. @ " << Time << std::endl;
+					//TODO: Remove Time (to see if the program end before the last spin is finished.)
+					UnregisterHotKey(NULL, 1);
+					ResetButtons();
 					return;
 				}
 				if (Time < HitObjects[HitObjectsIterator]->Time)
 				{
 					FoundNextHit = true;
-					KlickedHit = false;
 					nextHit = gcnew HitObject;
 					nextHit = HitObjects[HitObjectsIterator];
 				}
@@ -156,22 +175,17 @@ void Play::StartPlaying()
 			if (Time > NextClick->BeginKlick && FoundNextHit)
 			{
  				FoundNextHit = false;
+				if (HitObjects[HitObjects->Count - 1]->Time == nextHit->Time)
+					std::cout << "Last Hit at: " << nextHit->Time << " - " <<NextClick->EndKlick << std::endl;
 				Klick();
 			}
-			//if (Time > NextClick->BeginKlick && !KlickedHit)
-			//{
-			//	KlickedHit = true;
-			//	Klick();
-			//}
-			//else if(KlickedHit && Time > NextClick->BeginKlick + 5)	//Buffer for it to not let hits out.
-			//{
-			//	KlickedHit = false;
-			//	FoundNextHit = false;
-			//}
 		}
 		ReleaseButtons(Time);
 		//TODO: Fix random stopping (after pause?)
-	} 
+	}
+	std::cout << "Stopped Playing." << std::endl;
+	UnregisterHotKey(NULL, 1);
+	ResetButtons();
 }
 
 void Play::Klick()
@@ -196,6 +210,15 @@ void Play::ReleaseButtons(const int &Time)
 	}
 }
 
+void Play::ResetButtons()
+{
+	SendInput(1, Button1->ReleaseButton, sizeof(INPUT));
+	Button1->Pressed = false;
+
+	SendInput(1, Button2->ReleaseButton, sizeof(INPUT));
+	Button2->Pressed = false;
+}
+
 void Play::BT1Klick()
 {
 	if (!Button1->Pressed)
@@ -212,7 +235,7 @@ void Play::BT1Klick()
 	}
 	else
 	{	//forcerelease
-		KlickedHit = false;
+		FoundNextHit = true;
 		SendInput(1, Button1->ReleaseButton, sizeof(INPUT));
 		Button1->Pressed = false;
 		return;
@@ -236,7 +259,7 @@ void Play::BT2Klick()
 	}
 	else
 	{	//forcerelease
-		KlickedHit = false;
+		FoundNextHit = true;
 		SendInput(1, Button2->ReleaseButton, sizeof(INPUT));
 		Button2->Pressed = false;
 		return;

@@ -14,10 +14,19 @@ void Beatmap::LoadBeatmap(System::String ^BeatmapPath)
 	Path = BeatmapPath;
 	readBeatmap();
 	readVersion();
-	readDifficulty();
-	readBPMs();
-	readHitObjects();
-	BeatmapLoaded = true;
+	readMode();
+
+	if (MapMode == 0 || MapMode == 4 && MapVersion < 1)
+	{
+		readDifficulty();
+		readBPMs();
+		readHitObjects();
+		BeatmapLoaded = true;
+	}
+	else
+	{
+		std::cout << "Not a valid Osu:Mode Beatmap." << std::endl;
+	}
 }
 
 void Beatmap::readBeatmap()
@@ -38,7 +47,7 @@ void Beatmap::readBeatmap()
 		std::cout << "Something went wrong loading Beatmap: " << CString(Path) << std::endl;
 		return;
 	}
-	std::cout << "Beatmap successfully loaded: " << CString(Path) << std::endl;
+	std::cout << "Beatmap successfully read: " << CString(Path) << std::endl;
 }
 
 void Beatmap::readVersion()
@@ -51,6 +60,25 @@ void Beatmap::readVersion()
 	MapVersion = System::Convert::ToInt32(BeatmapFile[0]->Substring(OsuFileFormat->Length,
 					BeatmapFile[0]->Length - OsuFileFormat->Length)->Trim());
 	std::cout << "Mapversion: " << MapVersion << std::endl;
+}
+
+void Beatmap::readMode()
+{
+	if (Error != 0)
+		return;
+
+	System::String ^Mode("Mode:");
+
+	MapMode = 4; //Error
+
+	for (int i = 0; i < BeatmapFile->Length; i++)
+	{
+		if (BeatmapFile[i]->Contains(Mode))
+		{
+			MapMode = System::Convert::ToInt32(BeatmapFile[i]->Substring(Mode->Length,
+				BeatmapFile[i]->Length - Mode->Length)->Trim());
+		}
+	}
 }
 
 void Beatmap::readDifficulty()
@@ -107,7 +135,7 @@ void Beatmap::readBPMs()
 	{
 		Line = BeatmapFile[i]->Split(',');
 		BPM ^bpm = gcnew BPM;
-		bpm->Time = System::Convert::ToInt32(Line[0]);
+		bpm->Time = static_cast<int>(System::Convert::ToDouble(Line[0]->Replace(".", ",")));
 		bpm->Duration = System::Convert::ToDouble(Line[1]->Replace(".", ","));
 		BPMs->Add(bpm);
 		i++;
@@ -157,6 +185,17 @@ int Beatmap::getError()
 int Beatmap::getVersion()
 {
 	return MapVersion;
+}
+
+int Beatmap::getMode()
+{
+	//Modes
+	//	0 = osu!
+	//	1 = Taiko
+	//	2 = Catch the Beat
+	//	3 = osu!mania
+	//	4 = Not Found
+	return MapMode;
 }
 
 double Beatmap::getMapOverallDifficulty()

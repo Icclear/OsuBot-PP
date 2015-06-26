@@ -32,6 +32,7 @@ public:
 
 	int getError();
 	int getVersion();
+	int getMode();
 	double getMapCircleSize();
 	double getMapOverallDifficulty();
 	double getMapApproachRate();
@@ -43,6 +44,7 @@ private:
 	bool BeatmapLoaded;
 	unsigned int Error;
 	unsigned int MapVersion;
+	unsigned int MapMode;
 	double MapCircleSize;
 	double MapOverallDifficulty;
 	double MapApproachRate;
@@ -56,6 +58,7 @@ private:
 
 	void readBeatmap();
 	void readVersion();
+	void readMode();
 	void readDifficulty();
 	void readBPMs();
 	void readHitObjects();
