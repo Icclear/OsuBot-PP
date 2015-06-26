@@ -1,4 +1,5 @@
 #include <iostream>
+#include <atlstr.h>		//CString
 
 #ifndef CONFIG_H
 #define CONFIG_H
@@ -14,6 +15,8 @@ private:
 	array<System::String^> ^SettingsFile;
 
 	int Error = 0;
+
+	void CreateIni();
 
 	static System::String ^Dir = "/Data";
 	static System::String ^File = "/Settings.ini";
