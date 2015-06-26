@@ -2,6 +2,7 @@
 #include "Beatmap.h"
 #include "OsuManagement.h"
 #include "PlayUI.h"
+#include "Config.h"
 
 #ifndef PLAY_H
 #define PLAY_H
@@ -20,6 +21,7 @@ ref struct KlickButton
 	INPUT *PressButton;
 	INPUT *ReleaseButton;
 	int ReleaseAt;
+	int Keycode;
 };
 
 ref class Play

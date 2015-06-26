@@ -13,10 +13,21 @@ Play::Play(Beatmap ^beatmap, OsuManagement ^osu)
 	Button1 = gcnew KlickButton;
 	Button2 = gcnew KlickButton;
 
-	Button1->PressButton = InitButton(VK_OEM_MINUS, true);
-	Button1->ReleaseButton = InitButton(VK_OEM_MINUS, false);
-	Button2->PressButton = InitButton(VK_OEM_PERIOD, true);
-	Button2->ReleaseButton = InitButton(VK_OEM_PERIOD, false);
+	Config config;
+	System::String ^Value = config.getValueByKey("Button1");
+	if(Value->Length == 0)
+		Value = "x";
+	Button1->Keycode = VkKeyScanEx(Value->ToCharArray()[0], GetKeyboardLayout(0)) & 0xFF;
+
+	Value = config.getValueByKey("Button2");
+	if (Value->Length == 0)
+		Value = "z";
+	Button2->Keycode = VkKeyScanEx(Value->ToCharArray()[0], GetKeyboardLayout(0)) & 0xFF;
+
+	Button1->PressButton = InitButton(Button1->Keycode, true);
+	Button1->ReleaseButton = InitButton(Button1->Keycode, false);
+	Button2->PressButton = InitButton(Button2->Keycode, true);
+	Button2->ReleaseButton = InitButton(Button2->Keycode, false);
 
 	StartPlaying();
 }
