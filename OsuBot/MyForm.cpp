@@ -5,7 +5,9 @@ using namespace System::Windows::Forms;
 
 
 [STAThread]
-int main()
+
+//int main()
+int WINAPI WinMain(HINSTANCE inst, HINSTANCE prev, LPSTR cmd, int show)
 {
 	Application::EnableVisualStyles();
 	Application::SetCompatibleTextRenderingDefault(false);
@@ -24,16 +26,6 @@ OsuBot::MyForm::MyForm(void)
 	Osu = gcnew OsuManagement();
 	LoadedBeatmap = gcnew Beatmap();
 	LoadSongList();
-}
-
-System::Void OsuBot::MyForm::button1_Click(System::Object^  sender, System::EventArgs^  e)
-{
-	int Time = 0;
-	Osu->readTime(Time);
-	char Title[256];
-	Osu->getWindowTitle(Title);
-	MyForm::label1->Text = "Time is " + Time.ToString() + "\n" 
-		+ Osu->getFilepath() + "\nTitle: " + gcnew System::String(Title);
 }
 
 void OsuBot::MyForm::LoadSongList()
@@ -90,7 +82,7 @@ void OsuBot::MyForm::LoadSelectedBeatmap()
 	LoadedBeatmap->LoadBeatmap(SelectedDiff);
 
 	if (LoadedBeatmap->getError() == 0 && (LoadedBeatmap->getMode() == 0 
-			|| LoadedBeatmap->getMode() == 4 && LoadedBeatmap->getVersion() < 1))	//TODO: Find out the actual version mode was implemented.
+			|| LoadedBeatmap->getMode() == 4 && LoadedBeatmap->getVersion() <= 3))	//TODO: Find out the actual version mode was implemented.
 		BeatmapLoaded = true;
 	else
 		BeatmapLoaded = false;
@@ -98,12 +90,16 @@ void OsuBot::MyForm::LoadSelectedBeatmap()
 	if (BeatmapLoaded)
 	{
 		Playcheck->Enabled = true;
+
+		LoadedBeatmapLabel->Text = "Loaded Beatmap: \n" + LoadedBeatmap->getName();
 	}
 	else
 	{
 		Playcheck->Enabled = false;
 		std::cout << "MapVersion: " << LoadedBeatmap->getVersion() << " & Mode: " << LoadedBeatmap->getMode() << std::endl;
 		//TODO: Remove this line later.
+
+		LoadedBeatmapLabel->Text = "Loaded Beatmap: ";
 	}
 }
 

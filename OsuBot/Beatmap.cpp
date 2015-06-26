@@ -8,6 +8,13 @@ Beatmap::Beatmap()
 
 void Beatmap::LoadBeatmap(System::String ^BeatmapPath)
 {
+	Path = BeatmapPath;
+
+	array<System::String^> ^BeatPath = Path->Split('\\');
+	Name = BeatPath[BeatPath->Length - 1];
+	System::String ^Osu = ".osu";
+	Name = Name->Substring(0, Name->IndexOf(Osu));
+
 	Error = 0;
 	BeatmapLoaded = false;
 	std::cout << "Loading Beatmap..." << std::endl;
@@ -16,7 +23,7 @@ void Beatmap::LoadBeatmap(System::String ^BeatmapPath)
 	readVersion();
 	readMode();
 
-	if (MapMode == 0 || MapMode == 4 && MapVersion < 1)
+	if (MapMode == 0 || MapMode == 4 && MapVersion <= 3)
 	{
 		readDifficulty();
 		readBPMs();
@@ -175,6 +182,15 @@ void Beatmap::readHitObjects()
 	}
 }
 
+System::String ^Beatmap::getPath()
+{
+	return Path;
+}
+
+System::String ^Beatmap::getName()
+{
+	return Name;
+}
 
 int Beatmap::getError()
 {

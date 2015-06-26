@@ -1,6 +1,7 @@
 #include <Windows.h>
 #include "Beatmap.h"
 #include "OsuManagement.h"
+#include "PlayUI.h"
 
 #ifndef PLAY_H
 #define PLAY_H
@@ -45,7 +46,7 @@ private:
 	INPUT *InitButton(WORD ButtonNR, bool Press);
 
 	void Klick();
-	void ReleaseButtons(const int &Time);
+	void ReleaseButtons(const int &time);
 	void ResetButtons();
 	void BT1Klick();
 	void BT2Klick();

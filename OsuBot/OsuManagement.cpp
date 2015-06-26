@@ -5,7 +5,7 @@ OsuManagement::OsuManagement()
 	Error = 0;
 	std::cout << "Searching Window." << std::endl;
 
-	Window = FindWindow(0, "osu!");
+	Window = FindWindow(0, (LPCSTR)"osu!");
 	if (Window == 0 || Window == nullptr)
 	{
 		Error = 1;
@@ -53,13 +53,6 @@ OsuManagement::OsuManagement()
 	std::cout << "Initializing Filepath and Timeadress." << std::endl;
 
 	Filepath = System::Diagnostics::Process::GetProcessById(ProcessID)->Modules[0]->FileName;
-	struct stat buffer;
-	if(stat(CString(Filepath), &buffer) != 0)	//File valid
-	{
-		Error = 5;
-		std::cout << std::endl << "Directory invalid." << std::endl;
-		return;
-	}
 
 	System::String ^OsuExe("osu!.exe");
 	Filepath = Filepath->Substring(0, Filepath->Length - OsuExe->Length);	//Remove osu!.exe

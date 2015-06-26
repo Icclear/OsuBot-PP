@@ -30,6 +30,8 @@ public:
 
 	void LoadBeatmap(System::String ^BeatmapPath);
 
+	System::String ^getPath();
+	System::String ^getName();
 	int getError();
 	int getVersion();
 	int getMode();
@@ -51,6 +53,7 @@ private:
 	double MapSliderMultiplier;
 
 	System::String ^Path;
+	System::String ^Name;
 	array<System::String^> ^BeatmapFile;
 	System::Collections::Generic::List<BPM^> ^BPMs;
 	System::Collections::Generic::List<HitObject^> ^HitObjects;

@@ -78,12 +78,19 @@ void Play::StartPlaying()
 	RegisterHotKey(NULL, 1, MOD_NOREPEAT, 0x53);
 	MSG HotKey;
 
+	OsuBot::PlayUI PlayUI;
+	PlayUI.setSong(LoadedBeatmap->getName());
+	PlayUI.Show();
+
 	char Title[0x10];
 	do
 	{
 		Osu->getWindowTitle(Title);
 		if (CString(Title) == CString("osu!"))	//Not playing at all
+		{
 			return;
+			PlayUI.Close();
+		}
 
 		Osu->readTime(Time);
 		Sleep(5);
@@ -91,7 +98,7 @@ void Play::StartPlaying()
 
 	while (Playing)
 	{
-		if (Time % 200 == 0)	//Hotkey for stop pressed?
+		if (Time % 20 == 0)	//Hotkey for stop pressed?
 		{
 			GetMessage(&HotKey, NULL, NULL, NULL);
 			if (HotKey.message == WM_HOTKEY)
@@ -127,6 +134,7 @@ void Play::StartPlaying()
 					std::cout << "Finished Playing." << std::endl;
 					UnregisterHotKey(NULL, 1);
 					ResetButtons();
+					PlayUI.Close();
 					return;
 				}
 				if (Time < HitObjects[HitObjectsIterator]->Time)
@@ -181,6 +189,7 @@ void Play::StartPlaying()
 	std::cout << "Stopped Playing." << std::endl;
 	UnregisterHotKey(NULL, 1);
 	ResetButtons();
+	PlayUI.Close();
 }
 
 void Play::Klick()
@@ -191,8 +200,9 @@ void Play::Klick()
 		BT2Klick();
 }
 
-void Play::ReleaseButtons(const int &Time)
+void Play::ReleaseButtons(const int &time)
 {
+	static const int &Time = time;
 	if (Button1->Pressed && Time > Button1->ReleaseAt)
 	{
 		SendInput(1, Button1->ReleaseButton, sizeof(INPUT));
