@@ -1,5 +1,6 @@
 #include <iostream>
 #include <atlstr.h>		//CString
+#include <fstream>
 
 #ifndef CONFIG_H
 #define CONFIG_H

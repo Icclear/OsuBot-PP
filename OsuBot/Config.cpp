@@ -38,7 +38,9 @@ void Config::CreateIni()
 		System::IO::Directory::CreateDirectory(System::IO::Directory::GetCurrentDirectory() + Dir);
 	}
 
-	File::Create(System::IO::Directory::GetCurrentDirectory() + Dir + File);
+	System::IO::FileStream ^file = File::Create(System::IO::Directory::GetCurrentDirectory() + Dir + File);
+	file->Close();
+
 	FILE *IniFile = fopen(CString(System::IO::Directory::GetCurrentDirectory() + Dir + File), "w");
 	if (IniFile == nullptr)
 	{
