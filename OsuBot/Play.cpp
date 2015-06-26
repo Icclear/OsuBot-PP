@@ -1,7 +1,5 @@
 #include "Play.h"
 
-
-
 Play::Play(Beatmap ^beatmap, OsuManagement ^osu)
 {
 	std::cout << "Playing" << std::endl;
@@ -83,18 +81,17 @@ void Play::StartPlaying()
 	char Title[0x10];
 	do
 	{
-		Osu->getWindowTitle(Title);	
+		Osu->getWindowTitle(Title);
 		if (CString(Title) == CString("osu!"))	//Not playing at all
 			return;
 
 		Osu->readTime(Time);
 		Sleep(5);
-	}
-	while (Time < HitObjects[0]->Time - 200 || Time > HitObjects[0]->Time);	//Wait for start
+	} while (Time < HitObjects[0]->Time - 200 || Time > HitObjects[0]->Time);	//Wait for start
 
 	while (Playing)
 	{
-		if (Time % 100 == 0)
+		if (Time % 200 == 0)	//Hotkey for stop pressed?
 		{
 			GetMessage(&HotKey, NULL, NULL, NULL);
 			if (HotKey.message == WM_HOTKEY)
@@ -127,8 +124,7 @@ void Play::StartPlaying()
 					FinishedSong = true;
 					if (Button1->Pressed || Button2->Pressed)
 						break;
-					std::cout << "Finished Playing. @ " << Time << std::endl;
-					//TODO: Remove Time (to see if the program end before the last spin is finished.)
+					std::cout << "Finished Playing." << std::endl;
 					UnregisterHotKey(NULL, 1);
 					ResetButtons();
 					return;
@@ -140,18 +136,18 @@ void Play::StartPlaying()
 					nextHit = HitObjects[HitObjectsIterator];
 				}
 				HitObjectsIterator++;
-			} 
+			}
 
 			if (!FinishedSong)
 			{
 				NextClick->BeginKlick = nextHit->Time - preKlick;
 
-				if (nextHit->Type == 1 || nextHit->Type == 5 || nextHit->Type == 16	//HitCircle
-					|| nextHit->Type == 37 || nextHit->Type == 21)
+				if((nextHit->Type & 1) > 0)	//HitCircle
 				{
 					NextClick->EndKlick = NextClick->BeginKlick + extraPressTime;
 				}
-				else if (nextHit->Type == 12 || nextHit->Type == 8)	//Spin
+
+				else if((nextHit->Type & 8) > 0)	//Spin
 				{
 					NextClick->EndKlick = nextHit->SpinEndTime;
 
@@ -159,7 +155,7 @@ void Play::StartPlaying()
 						NextClick->EndKlick = BPMs[BPMIterator + 1]->Time - extraPressTime;
 					//TODO: Some spins don't work
 				}
-				else		//Slider
+				else if ((nextHit->Type & 2) > 0)	//Slider
 				{
 					NextClick->EndKlick = NextClick->BeginKlick
 						+ currentBPM * nextHit->Repetition * nextHit->PixelLength
@@ -168,20 +164,19 @@ void Play::StartPlaying()
 					if (BPMIterator < BPMs->Count - 1 && NextClick->EndKlick >= BPMs[BPMIterator + 1]->Time)
 						NextClick->EndKlick = BPMs[BPMIterator + 1]->Time - extraPressTime;
 				}
+				else
+					std::cout << "Unknown Object, no.: " << HitObjectsIterator - 1 << std::endl;	//Error
 			}
 		}
 		if (!FinishedSong)
 		{
 			if (Time > NextClick->BeginKlick && FoundNextHit)
 			{
- 				FoundNextHit = false;
-				if (HitObjects[HitObjects->Count - 1]->Time == nextHit->Time)
-					std::cout << "Last Hit at: " << nextHit->Time << " - " <<NextClick->EndKlick << std::endl;
+				FoundNextHit = false;
 				Klick();
 			}
 		}
 		ReleaseButtons(Time);
-		//TODO: Fix random stopping (after pause?)
 	}
 	std::cout << "Stopped Playing." << std::endl;
 	UnregisterHotKey(NULL, 1);
