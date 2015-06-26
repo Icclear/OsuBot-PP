@@ -66,7 +66,7 @@ namespace OsuBot {
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->AutoValidate = System::Windows::Forms::AutoValidate::EnableAllowFocusChange;
-			this->ClientSize = System::Drawing::Size(372, 0);
+			this->ClientSize = System::Drawing::Size(372, 23);
 			this->ControlBox = false;
 			this->MaximizeBox = false;
 			this->MinimizeBox = false;
@@ -74,7 +74,7 @@ namespace OsuBot {
 			this->Opacity = 0.3;
 			this->ShowIcon = false;
 			this->ShowInTaskbar = false;
-			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterParent;
+			this->StartPosition = System::Windows::Forms::FormStartPosition::Manual;
 			this->Text = L"PlayUI";
 			this->TopMost = true;
 			this->MouseEnter += gcnew System::EventHandler(this, &PlayUI::PlayUI_MouseEnter);

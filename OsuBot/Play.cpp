@@ -21,15 +21,6 @@ Play::Play(Beatmap ^beatmap, OsuManagement ^osu)
 	StartPlaying();
 }
 
-/*		
-		ipm.ki.dwFlags = 0; //Keydown
-		while (true)
-		{
-			SendInput(1, &ipm, sizeof(INPUT));
-			Sleep(5000);
-		}
-		*/
-
 Play::~Play()
 {
 	delete Button1->PressButton;
@@ -159,9 +150,8 @@ void Play::StartPlaying()
 				{
 					NextClick->EndKlick = nextHit->SpinEndTime;
 
-					if (BPMIterator < BPMs->Count - 1 && NextClick->EndKlick >= BPMs[BPMIterator + 1]->Time)
-						NextClick->EndKlick = BPMs[BPMIterator + 1]->Time - extraPressTime;
-					//TODO: Some spins don't work
+					if (HitObjectsIterator < HitObjects->Count - 1 && NextClick->EndKlick >= HitObjects[HitObjectsIterator + 1]->Time)
+						NextClick->EndKlick = HitObjects[HitObjectsIterator + 1]->Time - extraPressTime;
 				}
 				else if ((nextHit->Type & 2) > 0)	//Slider
 				{
@@ -169,8 +159,8 @@ void Play::StartPlaying()
 						+ currentBPM * nextHit->Repetition * nextHit->PixelLength
 						/ LoadedBeatmap->getMapSliderMultiplier() / 100;
 
-					if (BPMIterator < BPMs->Count - 1 && NextClick->EndKlick >= BPMs[BPMIterator + 1]->Time)
-						NextClick->EndKlick = BPMs[BPMIterator + 1]->Time - extraPressTime;
+					if (HitObjectsIterator < HitObjects->Count - 1 && NextClick->EndKlick >= HitObjects[HitObjectsIterator + 1]->Time)
+						NextClick->EndKlick = HitObjects[HitObjectsIterator + 1]->Time - extraPressTime;
 				}
 				else
 					std::cout << "Unknown Object, no.: " << HitObjectsIterator - 1 << std::endl;	//Error
