@@ -23,7 +23,7 @@ public:
 	void readPlaying(bool &Playing);
 	int getError();
 	System::String ^getFilepath();
-	void getWindowTitle(char *Path);
+	System::String ^getWindowTitle();
 };
 
 #endif

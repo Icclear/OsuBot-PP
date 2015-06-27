@@ -28,7 +28,7 @@ OsuManagement::OsuManagement()
 
 	std::cout << "Opening Process." << std::endl;
 
-	ProcessHandle = OpenProcess(PROCESS_VM_READ, false, ProcessID); //Alternatively PROCESS_ALL_ACCESS
+	ProcessHandle = OpenProcess(PROCESS_VM_READ, false, ProcessID);
 	if (ProcessHandle == 0 || ProcessHandle == nullptr)
 	{
 		Error = 3;
@@ -58,8 +58,8 @@ OsuManagement::OsuManagement()
 	Filepath = Filepath->Substring(0, Filepath->Length - OsuExe->Length);	//Remove osu!.exe
 	Filepath = System::String::Concat(Filepath, "Songs\\");					//add Songs\
 
-	TimeAdress = (LPVOID)(ScanAdress + 0xA20);
-	PlayingAdress = (LPVOID)(ScanAdress + 0xA20 + 0xA34);
+	TimeAdress = (LPVOID)(ScanAdress + 0xA20);				//Don't know why these offsets work.
+	PlayingAdress = (LPVOID)(ScanAdress + 0xA20 + 0xA34);	//I got them from a guy on the internet.
 
 	std::cout << "Success. Everything worked so far." << std::endl;
 }
@@ -88,10 +88,15 @@ System::String ^OsuManagement::getFilepath()
 	return "";
 }
 
-void OsuManagement::getWindowTitle(char *Path)
+System::String ^OsuManagement::getWindowTitle()
 {
-	if(Error == 0)
-		GetWindowText(Window, (LPSTR)Path, 0x10);
-	else
-		Path[0] = *"\0";
+
+	if (Error == 0)
+	{
+		const static int Length = 256;
+		char Title[Length];
+		GetWindowText(Window, (LPSTR)Title, Length);
+		return gcnew System::String(Title);
+	}
+	return "";
 }

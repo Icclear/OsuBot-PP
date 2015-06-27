@@ -59,8 +59,10 @@ void Play::StartPlaying()
 	FoundNextHit = false;
 	bool FinishedSong = false;
 
-	const int preKlick = 10;
-	const int extraPressTime = 25;
+	Config config;
+
+	const int preKlick = System::Convert::ToInt32(config.getValueByKey("preKlick", "10"));
+	const int extraPressTime = System::Convert::ToInt32(config.getValueByKey("extraPressTime", "35"));;
 
 	double currentBPM = BPMs[0]->Duration;
 	double lastBPM = currentBPM;
@@ -79,10 +81,10 @@ void Play::StartPlaying()
 	PlayUI.Show();
 
 	char Title[0x10];
+	//Osu->getWindowTitle(Title);
+	//if (CString(Title) == CString("osu!"))
 	do
 	{
-		//Osu->getWindowTitle(Title);
-		//if (CString(Title) == CString("osu!"))	//Not playing at all
 		Osu->readPlaying(Playing);
 		if(!Playing)
 		{
@@ -93,6 +95,9 @@ void Play::StartPlaying()
 		Osu->readTime(Time);
 		Sleep(100);
 	} while (Time < HitObjects[0]->Time - 200 || Time > HitObjects[0]->Time);	//Wait for start
+
+	std::cout << "\n\nTitle: " << CString(Osu->getWindowTitle()) << std::endl << std::endl;
+	//TODO: Remove
 
 	while (Playing)
 	{
@@ -176,7 +181,7 @@ void Play::StartPlaying()
 		}
 
 		ReleaseButtons(Time);
-		Sleep(1);
+		Sleep(1);	//remove this line for fast maps with doubletime. lol
 	}
 	std::cout << "Stopped Playing." << std::endl;
 	ResetButtons();
