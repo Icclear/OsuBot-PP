@@ -56,6 +56,8 @@ namespace OsuBot {
 	private: System::Windows::Forms::Label^  label1;
 	private: System::Windows::Forms::Label^  label2;
 	private: System::Windows::Forms::Label^  LoadedBeatmapLabel;
+	private: System::Windows::Forms::CheckBox^  HREnabled;
+	private: System::Windows::Forms::CheckBox^  FuckPerformance;
 
 
 	private: System::Windows::Forms::TextBox^  Songsearch;
@@ -93,6 +95,8 @@ namespace OsuBot {
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->LoadedBeatmapLabel = (gcnew System::Windows::Forms::Label());
+			this->HREnabled = (gcnew System::Windows::Forms::CheckBox());
+			this->FuckPerformance = (gcnew System::Windows::Forms::CheckBox());
 			this->SuspendLayout();
 			// 
 			// SongListBox
@@ -142,10 +146,24 @@ namespace OsuBot {
 			resources->ApplyResources(this->LoadedBeatmapLabel, L"LoadedBeatmapLabel");
 			this->LoadedBeatmapLabel->Name = L"LoadedBeatmapLabel";
 			// 
+			// HREnabled
+			// 
+			resources->ApplyResources(this->HREnabled, L"HREnabled");
+			this->HREnabled->Name = L"HREnabled";
+			this->HREnabled->UseVisualStyleBackColor = true;
+			// 
+			// FuckPerformance
+			// 
+			resources->ApplyResources(this->FuckPerformance, L"FuckPerformance");
+			this->FuckPerformance->Name = L"FuckPerformance";
+			this->FuckPerformance->UseVisualStyleBackColor = true;
+			// 
 			// MyForm
 			// 
 			resources->ApplyResources(this, L"$this");
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
+			this->Controls->Add(this->FuckPerformance);
+			this->Controls->Add(this->HREnabled);
 			this->Controls->Add(this->LoadedBeatmapLabel);
 			this->Controls->Add(this->label2);
 			this->Controls->Add(this->label1);

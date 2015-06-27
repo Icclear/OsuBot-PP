@@ -24,8 +24,6 @@ Play::Play(Beatmap ^beatmap, OsuManagement ^osu)
 	Button1->ReleaseButton = InitButton(Button1->Keycode, false);
 	Button2->PressButton = InitButton(Button2->Keycode, true);
 	Button2->ReleaseButton = InitButton(Button2->Keycode, false);
-
-	StartPlaying();
 }
 
 Play::~Play()
@@ -61,8 +59,10 @@ void Play::StartPlaying()
 
 	Config config;
 
-	const int preKlick = System::Convert::ToInt32(config.getValueByKey("preKlick", "10"));
-	const int extraPressTime = System::Convert::ToInt32(config.getValueByKey("extraPressTime", "35"));;
+	//const int preKlick = System::Convert::ToInt32(config.getValueByKey("preKlick", "10"));
+	const int preKlick = 3 + (78 - (LoadedBeatmap->getMapOverallDifficulty(HR) * 6));
+	std::cout << "Preklick: " << preKlick << std::endl;
+	const int extraPressTime = System::Convert::ToInt32(config.getValueByKey("extraPressTime", "35"));
 
 	double currentBPM = BPMs[0]->Duration;
 	double lastBPM = currentBPM;
@@ -160,7 +160,7 @@ void Play::StartPlaying()
 				}
 				else if ((nextHit->Type & 2) > 0)	//Slider
 				{
-					NextClick->EndKlick = NextClick->BeginKlick
+					NextClick->EndKlick = nextHit->Time
 						+ currentBPM * nextHit->Repetition * nextHit->PixelLength
 						/ LoadedBeatmap->getMapSliderMultiplier() / 100;
 
@@ -181,7 +181,8 @@ void Play::StartPlaying()
 		}
 
 		ReleaseButtons(Time);
-		Sleep(1);	//remove this line for fast maps with doubletime. lol
+		if(Careaboutpreformance)
+			Sleep(1);
 	}
 	std::cout << "Stopped Playing." << std::endl;
 	ResetButtons();

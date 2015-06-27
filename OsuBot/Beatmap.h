@@ -36,7 +36,7 @@ public:
 	int getVersion();
 	int getMode();
 	double getMapCircleSize();
-	double getMapOverallDifficulty();
+	double getMapOverallDifficulty(bool HR);
 	double getMapApproachRate();
 	double getMapSliderMultiplier();
 	System::Collections::Generic::List<BPM^> ^getBPMs();

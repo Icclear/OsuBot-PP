@@ -30,6 +30,8 @@ public:
 	Play(Beatmap ^beatmap, OsuManagement ^osu);
 	~Play();
 	void StartPlaying();
+	void activateHR() { HR = true; }
+	void FuckPerformance() { Careaboutpreformance = false; }
 
 private:
 	Beatmap ^LoadedBeatmap;
@@ -41,6 +43,8 @@ private:
 
 	int LastButtonPressed = 1;
 	bool FoundNextHit;
+	bool HR = false;
+	bool Careaboutpreformance = true;
 
 	System::Collections::Generic::List<BPM^> ^BPMs;
 	System::Collections::Generic::List<HitObject^> ^HitObjects;

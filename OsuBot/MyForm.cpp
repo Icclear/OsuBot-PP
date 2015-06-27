@@ -61,8 +61,12 @@ void OsuBot::MyForm::LoadDiffList()
 	DiffList = System::IO::Directory::GetFiles(Songfolder, "*.osu");
 	for (int i = 0; i < DiffList->Length; i++)
 	{
-		System::String ^Filename = DiffList[i]->Substring(DiffList[i]->IndexOf("["),
-			DiffList[i]->LastIndexOf("]") - DiffList[i]->IndexOf("[") + 1);
+		System::String ^Filename;
+		if (DiffList[i]->Contains("["))
+			Filename = DiffList[i]->Substring(DiffList[i]->IndexOf("["),
+				DiffList[i]->LastIndexOf("]") - DiffList[i]->IndexOf("[") + 1);
+		else
+			Filename = "[]";
 		DiffListBox->Items->Add(Filename);
 	}
 }
@@ -109,5 +113,12 @@ void OsuBot::MyForm::checkForPlaying()
 	if(Playing)
 	{
 		Play ^Playing = gcnew Play(LoadedBeatmap, Osu);
+
+		if (HREnabled->Checked)
+			Playing->activateHR();
+		if (FuckPerformance)
+			Playing->FuckPerformance();
+
+		Playing->StartPlaying();
 	}
 }
