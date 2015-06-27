@@ -20,9 +20,9 @@ OsuBot::MyForm::MyForm(void)
 {
 	InitializeComponent();
 
-	//
-	//TODO: Konstruktorcode hier hinzufügen.
-	//
+	Config config;
+	this->Text = config.getValueByKey("WindowTitle", "ChangeMe");
+
 	Osu = gcnew OsuManagement();
 	LoadedBeatmap = gcnew Beatmap();
 	LoadSongList();
@@ -82,7 +82,7 @@ void OsuBot::MyForm::LoadSelectedBeatmap()
 	LoadedBeatmap->LoadBeatmap(SelectedDiff);
 
 	if (LoadedBeatmap->getError() == 0 && (LoadedBeatmap->getMode() == 0 
-			|| LoadedBeatmap->getMode() == 4 && LoadedBeatmap->getVersion() <= 3))	//TODO: Find out the actual version mode was implemented.
+			|| LoadedBeatmap->getMode() == 4 && LoadedBeatmap->getVersion() <= 3))
 		BeatmapLoaded = true;
 	else
 		BeatmapLoaded = false;
@@ -97,9 +97,8 @@ void OsuBot::MyForm::LoadSelectedBeatmap()
 	{
 		Playcheck->Enabled = false;
 		std::cout << "MapVersion: " << LoadedBeatmap->getVersion() << " & Mode: " << LoadedBeatmap->getMode() << std::endl;
-		//TODO: Remove this line later.
 
-		LoadedBeatmapLabel->Text = "Loaded Beatmap: ";
+		LoadedBeatmapLabel->Text = "Loaded Beatmap:\nWrong Gamemode or Error.";
 	}
 }
 
@@ -111,6 +110,4 @@ void OsuBot::MyForm::checkForPlaying()
 	{
 		Play ^Playing = gcnew Play(LoadedBeatmap, Osu);
 	}
-
-		//TODO: PLAY
 }

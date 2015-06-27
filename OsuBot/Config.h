@@ -10,7 +10,7 @@ ref class Config
 {
 public:
 	Config();
-	System::String ^getValueByKey(System::String ^Key);
+	System::String ^getValueByKey(System::String ^Key, System::String ^Default);
 
 private:
 	array<System::String^> ^SettingsFile;

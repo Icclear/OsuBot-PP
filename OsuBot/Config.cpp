@@ -16,7 +16,7 @@ Config::Config()
 		std::cout << "Error reading settings." << std::endl;
 }
 
-System::String ^Config::getValueByKey(System::String ^Key)
+System::String ^Config::getValueByKey(System::String ^Key, System::String ^Default)
 {
 	if (Error != 0)
 		return "";
@@ -28,7 +28,12 @@ System::String ^Config::getValueByKey(System::String ^Key)
 			return SettingsFile[i]->Substring(SettingsFile[i]->IndexOf("=") + 1)->Trim();
 		}
 	}
-	return "";
+
+	std::ofstream IniFile(CString(System::IO::Directory::GetCurrentDirectory() + Dir + File), std::ios_base::app);
+	IniFile << CString(Key + "=" + Default) << std::endl;
+	IniFile.close();
+
+	return Default;
 }
 
 void Config::CreateIni()
@@ -41,14 +46,7 @@ void Config::CreateIni()
 	System::IO::FileStream ^file = File::Create(System::IO::Directory::GetCurrentDirectory() + Dir + File);
 	file->Close();
 
-	FILE *IniFile = fopen(CString(System::IO::Directory::GetCurrentDirectory() + Dir + File), "w");
-	if (IniFile == nullptr)
-	{
-		std::cout << "Error creating File." << std::endl;
+
+	if (!System::IO::Directory::Exists(System::IO::Directory::GetCurrentDirectory() + Dir))
 		Error = 1;
-		return;
-	}
-	fprintf_s(IniFile, "Button1=x\n");
-	fprintf_s(IniFile, "Button2=z\n");
-	fclose(IniFile);
 }

@@ -14,14 +14,10 @@ Play::Play(Beatmap ^beatmap, OsuManagement ^osu)
 	Button2 = gcnew KlickButton;
 
 	Config config;
-	System::String ^Value = config.getValueByKey("Button1");
-	if(Value->Length == 0)
-		Value = "x";
+	System::String ^Value = config.getValueByKey("Button1", "x");
 	Button1->Keycode = VkKeyScanEx(Value->ToCharArray()[0], GetKeyboardLayout(0)) & 0xFF;
 
-	Value = config.getValueByKey("Button2");
-	if (Value->Length == 0)
-		Value = "z";
+	Value = config.getValueByKey("Button2", "z");
 	Button2->Keycode = VkKeyScanEx(Value->ToCharArray()[0], GetKeyboardLayout(0)) & 0xFF;
 
 	Button1->PressButton = InitButton(Button1->Keycode, true);
@@ -77,7 +73,9 @@ void Play::StartPlaying()
 
 	ResetButtons();
 
-	RegisterHotKey(NULL, 1, MOD_NOREPEAT, 0x53);
+	Config config;
+	RegisterHotKey(NULL, 1, MOD_NOREPEAT,
+		VkKeyScanEx(config.getValueByKey("StopKey", "s")->ToCharArray()[0], GetKeyboardLayout(0)) & 0xFF);
 	MSG HotKey;
 
 	OsuBot::PlayUI PlayUI;
@@ -100,6 +98,7 @@ void Play::StartPlaying()
 
 	while (Playing)
 	{
+
 		if (Time % 20 == 0)	//Hotkey for stop pressed?
 		{
 			GetMessage(&HotKey, NULL, NULL, NULL);
@@ -109,7 +108,8 @@ void Play::StartPlaying()
 		}
 
 		Osu->readTime(Time);
-		while (BPMIterator < BPMs->Count - 1 && Time > BPMs[BPMIterator + 1]->Time && Time >= 0)	//BPM change
+		while (BPMIterator < BPMs->Count - 1 && HitObjectsIterator < HitObjects->Count &&
+		HitObjects[HitObjectsIterator]->Time > BPMs[BPMIterator + 1]->Time - preKlick && Time >= 0)	//BPM change
 		{
 			BPMIterator++;
 			if (BPMs[BPMIterator]->Duration < 0)	//Inherited BPM
@@ -118,9 +118,8 @@ void Play::StartPlaying()
 			{
 				currentBPM = lastBPM = BPMs[BPMIterator]->Duration;
 			}
-			//TODO: Inherited points bugged?
-			continue;
 		}
+
 
 		if (!FoundNextHit)
 		{

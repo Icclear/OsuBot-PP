@@ -1,6 +1,5 @@
 #include "AOBScan.h"
 
-#include <iostream>
 DWORD AOBScan::FindPattern(HANDLE ProcessHandle, BYTE Signature[], unsigned const int ByteCount)
 {
 	const static unsigned int Mult = 4096;
@@ -24,7 +23,6 @@ DWORD AOBScan::FindPattern(HANDLE ProcessHandle, BYTE Signature[], unsigned cons
 			}
 			if (Hit)
 			{
-				std::cout << "Adress: " << std::hex << i + a << std::dec << std::endl;
 				return i + a;
 			}
 		}

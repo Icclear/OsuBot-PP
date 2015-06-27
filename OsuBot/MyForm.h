@@ -3,6 +3,7 @@
 #include "OsuManagement.h"
 #include "Beatmap.h"
 #include "Play.h"
+#include "Config.h"
 
 #ifndef MYFORM_H
 #define MYFORM_H
