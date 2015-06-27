@@ -216,7 +216,12 @@ int Beatmap::getMode()
 double Beatmap::getMapOverallDifficulty(bool HR)
 {
 	if (HR)
-		return MapOverallDifficulty * 1.4f;
+	{
+		double od = MapOverallDifficulty * 1.4f;
+		if(od < 10)
+			return od;
+		return 10.;
+	}
 	return MapOverallDifficulty;
 }
 

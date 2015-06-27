@@ -61,7 +61,7 @@ void Play::StartPlaying()
 
 	//const int preKlick = System::Convert::ToInt32(config.getValueByKey("preKlick", "10"));
 	const int preKlick = 3 + (78 - (LoadedBeatmap->getMapOverallDifficulty(HR) * 6));
-	std::cout << "Preklick: " << preKlick << std::endl;
+
 	const int extraPressTime = System::Convert::ToInt32(config.getValueByKey("extraPressTime", "35"));
 
 	double currentBPM = BPMs[0]->Duration;
