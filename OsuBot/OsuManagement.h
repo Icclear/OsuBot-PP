@@ -14,11 +14,13 @@ private:
 	DWORD ProcessID;
 	HANDLE ProcessHandle;
 	LPVOID TimeAdress;
+	LPVOID PlayingAdress;
 	System::String ^Filepath;
 	int Error;
 public:
 	OsuManagement();
 	void readTime(int &Time);
+	void readPlaying(bool &Playing);
 	int getError();
 	System::String ^getFilepath();
 	void getWindowTitle(char *Path);

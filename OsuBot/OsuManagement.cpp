@@ -59,6 +59,7 @@ OsuManagement::OsuManagement()
 	Filepath = System::String::Concat(Filepath, "Songs\\");					//add Songs\
 
 	TimeAdress = (LPVOID)(ScanAdress + 0xA20);
+	PlayingAdress = (LPVOID)(ScanAdress + 0xA20 + 0xA34);
 
 	std::cout << "Success. Everything worked so far." << std::endl;
 }
@@ -67,6 +68,12 @@ void OsuManagement::readTime(int &Time)
 {
 	if(Error == 0)
 		ReadProcessMemory(ProcessHandle, TimeAdress, &Time, sizeof(Time), NULL);
+}
+
+void OsuManagement::readPlaying(bool &Playing)
+{
+	if (Error == 0)
+		ReadProcessMemory(ProcessHandle, PlayingAdress, &Playing, sizeof(Playing), NULL);
 }
 
 int OsuManagement::getError()

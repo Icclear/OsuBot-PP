@@ -104,9 +104,12 @@ void OsuBot::MyForm::LoadSelectedBeatmap()
 
 void OsuBot::MyForm::checkForPlaying()
 {
-	char Title[0x10];
-	Osu->getWindowTitle(Title);
-	if (CString(Title) != CString("osu!"))
+	//char Title[0x10];
+	//Osu->getWindowTitle(Title);
+	//if (CString(Title) != CString("osu!"))
+	bool Playing = false;
+	Osu->readPlaying(Playing);
+	if(Playing)
 	{
 		Play ^Playing = gcnew Play(LoadedBeatmap, Osu);
 	}

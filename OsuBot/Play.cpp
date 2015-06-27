@@ -73,10 +73,6 @@ void Play::StartPlaying()
 
 	ResetButtons();
 
-	Config config;
-	RegisterHotKey(NULL, 1, MOD_NOREPEAT,
-		VkKeyScanEx(config.getValueByKey("StopKey", "s")->ToCharArray()[0], GetKeyboardLayout(0)) & 0xFF);
-	MSG HotKey;
 
 	OsuBot::PlayUI PlayUI;
 	PlayUI.setSong(LoadedBeatmap->getName());
@@ -85,29 +81,24 @@ void Play::StartPlaying()
 	char Title[0x10];
 	do
 	{
-		Osu->getWindowTitle(Title);
-		if (CString(Title) == CString("osu!"))	//Not playing at all
+		//Osu->getWindowTitle(Title);
+		//if (CString(Title) == CString("osu!"))	//Not playing at all
+		Osu->readPlaying(Playing);
+		if(!Playing)
 		{
 			return;
 			PlayUI.Close();
 		}
 
 		Osu->readTime(Time);
-		Sleep(5);
+		Sleep(100);
 	} while (Time < HitObjects[0]->Time - 200 || Time > HitObjects[0]->Time);	//Wait for start
 
 	while (Playing)
 	{
-
-		if (Time % 20 == 0)	//Hotkey for stop pressed?
-		{
-			GetMessage(&HotKey, NULL, NULL, NULL);
-			if (HotKey.message == WM_HOTKEY)
-				if (HotKey.wParam == 1)
-				Playing = false;
-		}
-
 		Osu->readTime(Time);
+		Osu->readPlaying(Playing);
+
 		while (BPMIterator < BPMs->Count - 1 && HitObjectsIterator < HitObjects->Count &&
 		HitObjects[HitObjectsIterator]->Time > BPMs[BPMIterator + 1]->Time - preKlick && Time >= 0)	//BPM change
 		{
@@ -133,7 +124,6 @@ void Play::StartPlaying()
 					if (Button1->Pressed || Button2->Pressed)
 						break;
 					std::cout << "Finished Playing." << std::endl;
-					UnregisterHotKey(NULL, 1);
 					ResetButtons();
 					PlayUI.Close();
 					return;
@@ -184,10 +174,11 @@ void Play::StartPlaying()
 				Klick();
 			}
 		}
+
 		ReleaseButtons(Time);
+		Sleep(1);
 	}
 	std::cout << "Stopped Playing." << std::endl;
-	UnregisterHotKey(NULL, 1);
 	ResetButtons();
 	PlayUI.Close();
 }
