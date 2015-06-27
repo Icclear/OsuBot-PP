@@ -31,6 +31,7 @@ public:
 	~Play();
 	void StartPlaying();
 	void activateHR() { HR = true; }
+	void activateDT() { DT = true; }
 	void FuckPerformance() { Careaboutpreformance = false; }
 
 private:
@@ -44,6 +45,7 @@ private:
 	int LastButtonPressed = 1;
 	bool FoundNextHit;
 	bool HR = false;
+	bool DT = false;
 	bool Careaboutpreformance = true;
 
 	System::Collections::Generic::List<BPM^> ^BPMs;

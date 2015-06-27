@@ -40,6 +40,7 @@ OsuManagement::OsuManagement()
 
 	BYTE Pattern[] = { 0xB4, 0x17, 0x00, 0x00, 0x14, 0x13, 0x00, 0x00,
 		0xB8, 0x17, 0x00 ,0x00, 0x14, 0x13, 0x00, 0x00 };
+
 	int PatternLength = sizeof(Pattern) / sizeof(BYTE);
 
 	DWORD ScanAdress = AOBScan::FindPattern(ProcessHandle, Pattern, PatternLength);
@@ -58,8 +59,8 @@ OsuManagement::OsuManagement()
 	Filepath = Filepath->Substring(0, Filepath->Length - OsuExe->Length);	//Remove osu!.exe
 	Filepath = System::String::Concat(Filepath, "Songs\\");					//add Songs\
 
-	TimeAdress = (LPVOID)(ScanAdress + 0xA20);				//Don't know why these offsets work.
-	PlayingAdress = (LPVOID)(ScanAdress + 0xA20 + 0xA34);	//I got them from a guy on the internet.
+	TimeAdress = (LPVOID)(ScanAdress + 0xA20);				
+	PlayingAdress = (LPVOID)(ScanAdress + 0xA20 + 0xA34);	
 
 	std::cout << "Success. Everything worked so far." << std::endl;
 }

@@ -116,6 +116,8 @@ void OsuBot::MyForm::checkForPlaying()
 
 		if (HREnabled->Checked)
 			Playing->activateHR();
+		if (DTEnabled->Checked)
+			Playing->activateDT();
 		if (FuckPerformance)
 			Playing->FuckPerformance();
 

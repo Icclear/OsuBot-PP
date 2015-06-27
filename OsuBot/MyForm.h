@@ -58,6 +58,7 @@ namespace OsuBot {
 	private: System::Windows::Forms::Label^  LoadedBeatmapLabel;
 	private: System::Windows::Forms::CheckBox^  HREnabled;
 	private: System::Windows::Forms::CheckBox^  FuckPerformance;
+	private: System::Windows::Forms::CheckBox^  DTEnabled;
 
 
 	private: System::Windows::Forms::TextBox^  Songsearch;
@@ -97,6 +98,7 @@ namespace OsuBot {
 			this->LoadedBeatmapLabel = (gcnew System::Windows::Forms::Label());
 			this->HREnabled = (gcnew System::Windows::Forms::CheckBox());
 			this->FuckPerformance = (gcnew System::Windows::Forms::CheckBox());
+			this->DTEnabled = (gcnew System::Windows::Forms::CheckBox());
 			this->SuspendLayout();
 			// 
 			// SongListBox
@@ -158,10 +160,17 @@ namespace OsuBot {
 			this->FuckPerformance->Name = L"FuckPerformance";
 			this->FuckPerformance->UseVisualStyleBackColor = true;
 			// 
+			// DTEnabled
+			// 
+			resources->ApplyResources(this->DTEnabled, L"DTEnabled");
+			this->DTEnabled->Name = L"DTEnabled";
+			this->DTEnabled->UseVisualStyleBackColor = true;
+			// 
 			// MyForm
 			// 
 			resources->ApplyResources(this, L"$this");
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
+			this->Controls->Add(this->DTEnabled);
 			this->Controls->Add(this->FuckPerformance);
 			this->Controls->Add(this->HREnabled);
 			this->Controls->Add(this->LoadedBeatmapLabel);

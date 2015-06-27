@@ -60,7 +60,10 @@ void Play::StartPlaying()
 	Config config;
 
 	//const int preKlick = System::Convert::ToInt32(config.getValueByKey("preKlick", "10"));
-	const int preKlick = 3 + (78 - (LoadedBeatmap->getMapOverallDifficulty(HR) * 6));
+	double dtfactor = 1;
+	if (DT)
+		dtfactor = 1.4;
+	const int preKlick = dtfactor * (3 + (78 - (LoadedBeatmap->getMapOverallDifficulty(HR) * 6)));
 
 	const int extraPressTime = System::Convert::ToInt32(config.getValueByKey("extraPressTime", "35"));
 
