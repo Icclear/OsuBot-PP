@@ -24,6 +24,7 @@ public:
 	int getError();
 	System::String ^getFilepath();
 	System::String ^getWindowTitle();
+	HWND getWindow();
 };
 
 #endif

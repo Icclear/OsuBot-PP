@@ -24,6 +24,17 @@ ref struct KlickButton
 	int Keycode;
 };
 
+ref struct WindowRatio
+{
+	static const int MaxX = 512;
+	static const int MaxY = 384;
+	static double Scale;
+	static int MarginTop;
+	static int MarginLeft;
+	double X;
+	double Y;
+};
+
 ref class Play
 {
 public:
@@ -42,6 +53,9 @@ private:
 	KlickButton ^Button1;
 	KlickButton ^Button2;
 
+	RECT *OsuRec;
+	WindowRatio ^WinRatio;
+
 	int LastButtonPressed = 1;
 	bool FoundNextHit;
 	bool HR = false;
@@ -54,6 +68,7 @@ private:
 	INPUT *InitButton(WORD ButtonNR, bool Press);
 
 	void Klick();
+	void MoveMouse(int x, int y);
 	void ReleaseButtons(const int &time);
 	void ResetButtons();
 	void BT1Klick();

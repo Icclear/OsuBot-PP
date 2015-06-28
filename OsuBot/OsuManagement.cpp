@@ -101,3 +101,8 @@ System::String ^OsuManagement::getWindowTitle()
 	}
 	return "";
 }
+
+HWND OsuManagement::getWindow()
+{
+	return Window;
+}

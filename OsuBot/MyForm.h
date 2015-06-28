@@ -57,7 +57,7 @@ namespace OsuBot {
 	private: System::Windows::Forms::Label^  label2;
 	private: System::Windows::Forms::Label^  LoadedBeatmapLabel;
 	private: System::Windows::Forms::CheckBox^  HREnabled;
-	private: System::Windows::Forms::CheckBox^  FuckPerformance;
+
 	private: System::Windows::Forms::CheckBox^  DTEnabled;
 
 
@@ -97,7 +97,6 @@ namespace OsuBot {
 			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->LoadedBeatmapLabel = (gcnew System::Windows::Forms::Label());
 			this->HREnabled = (gcnew System::Windows::Forms::CheckBox());
-			this->FuckPerformance = (gcnew System::Windows::Forms::CheckBox());
 			this->DTEnabled = (gcnew System::Windows::Forms::CheckBox());
 			this->SuspendLayout();
 			// 
@@ -154,12 +153,6 @@ namespace OsuBot {
 			this->HREnabled->Name = L"HREnabled";
 			this->HREnabled->UseVisualStyleBackColor = true;
 			// 
-			// FuckPerformance
-			// 
-			resources->ApplyResources(this->FuckPerformance, L"FuckPerformance");
-			this->FuckPerformance->Name = L"FuckPerformance";
-			this->FuckPerformance->UseVisualStyleBackColor = true;
-			// 
 			// DTEnabled
 			// 
 			resources->ApplyResources(this->DTEnabled, L"DTEnabled");
@@ -171,7 +164,6 @@ namespace OsuBot {
 			resources->ApplyResources(this, L"$this");
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->Controls->Add(this->DTEnabled);
-			this->Controls->Add(this->FuckPerformance);
 			this->Controls->Add(this->HREnabled);
 			this->Controls->Add(this->LoadedBeatmapLabel);
 			this->Controls->Add(this->label2);

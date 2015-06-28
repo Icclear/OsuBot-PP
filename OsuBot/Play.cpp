@@ -24,6 +24,25 @@ Play::Play(Beatmap ^beatmap, OsuManagement ^osu)
 	Button1->ReleaseButton = InitButton(Button1->Keycode, false);
 	Button2->PressButton = InitButton(Button2->Keycode, true);
 	Button2->ReleaseButton = InitButton(Button2->Keycode, false);
+
+	
+	OsuRec = new RECT;
+	GetClientRect(Osu->getWindow(), OsuRec);
+
+	WinRatio = gcnew WindowRatio;
+	WinRatio->X = (OsuRec->right - OsuRec->left) / WinRatio->MaxX;
+	WinRatio->Y = (OsuRec->bottom - OsuRec->top) / WinRatio->MaxY;
+
+	WinRatio->Scale = static_cast<double>(OsuRec->bottom - OsuRec->top) / 480;
+
+	WinRatio->MarginTop = static_cast<int>(static_cast<double>(480. - WinRatio->MaxY) * WinRatio->Scale / 2.);
+	WinRatio->MarginLeft = static_cast<int>(static_cast<double>(640. - WinRatio->MaxX) * WinRatio->Scale / 2.
+							+ (static_cast<double>(OsuRec->right - OsuRec->left) - 800. 
+								* static_cast<double>(OsuRec->bottom - OsuRec->top) / 600.) / 2.);
+
+	if (OsuRec->right - OsuRec->left == GetSystemMetrics(SM_CXSCREEN)
+		&& OsuRec->bottom - OsuRec->top == GetSystemMetrics(SM_CYSCREEN))
+		WinRatio->MarginTop += 13;
 }
 
 Play::~Play()
@@ -33,6 +52,7 @@ Play::~Play()
 	delete Button1->ReleaseButton;
 	delete Button2->ReleaseButton;
 	delete NextClick;
+	delete WinRatio;
 }
 
 INPUT *Play::InitButton(WORD VirtualKeyCode, bool Press)
@@ -63,7 +83,7 @@ void Play::StartPlaying()
 	double dtfactor = 1;
 	if (DT)
 		dtfactor = 1.4;
-	const int preKlick = dtfactor * (3 + (78 - (LoadedBeatmap->getMapOverallDifficulty(HR) * 6)));
+	const int preKlick = static_cast<int>(dtfactor * (3 + (78 - (LoadedBeatmap->getMapOverallDifficulty(HR) * 6))));
 
 	const int extraPressTime = System::Convert::ToInt32(config.getValueByKey("extraPressTime", "35"));
 
@@ -83,9 +103,6 @@ void Play::StartPlaying()
 	PlayUI.setSong(LoadedBeatmap->getName());
 	PlayUI.Show();
 
-	char Title[0x10];
-	//Osu->getWindowTitle(Title);
-	//if (CString(Title) == CString("osu!"))
 	do
 	{
 		Osu->readPlaying(Playing);
@@ -98,9 +115,6 @@ void Play::StartPlaying()
 		Osu->readTime(Time);
 		Sleep(100);
 	} while (Time < HitObjects[0]->Time - 200 || Time > HitObjects[0]->Time);	//Wait for start
-
-	std::cout << "\n\nTitle: " << CString(Osu->getWindowTitle()) << std::endl << std::endl;
-	//TODO: Remove
 
 	while (Playing)
 	{
@@ -163,9 +177,9 @@ void Play::StartPlaying()
 				}
 				else if ((nextHit->Type & 2) > 0)	//Slider
 				{
-					NextClick->EndKlick = nextHit->Time
+					NextClick->EndKlick = static_cast<int>(nextHit->Time
 						+ currentBPM * nextHit->Repetition * nextHit->PixelLength
-						/ LoadedBeatmap->getMapSliderMultiplier() / 100;
+						/ LoadedBeatmap->getMapSliderMultiplier() / 100.);
 
 					if (HitObjectsIterator < HitObjects->Count - 1 && NextClick->EndKlick >= HitObjects[HitObjectsIterator + 1]->Time)
 						NextClick->EndKlick = HitObjects[HitObjectsIterator + 1]->Time - extraPressTime;
@@ -174,6 +188,13 @@ void Play::StartPlaying()
 					std::cout << "Unknown Object, no.: " << HitObjectsIterator - 1 << std::endl;	//Error
 			}
 		}
+
+		
+		if (Time > NextClick->BeginKlick - preKlick)	//every 6 ms
+		{
+			MoveMouse(nextHit->x, nextHit->y);
+		}
+
 		if (!FinishedSong)
 		{
 			if (Time > NextClick->BeginKlick && FoundNextHit)
@@ -198,6 +219,12 @@ void Play::Klick()
 		BT1Klick();
 	else
 		BT2Klick();
+}
+
+void Play::MoveMouse(int x, int y)
+{
+	SetCursorPos(static_cast<int>(OsuRec->left + (x * WinRatio->Scale) + WinRatio->MarginLeft),
+				static_cast<int>(OsuRec->top + (y * WinRatio->Scale) + WinRatio->MarginTop));
 }
 
 void Play::ReleaseButtons(const int &time)
